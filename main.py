@@ -1,9 +1,11 @@
 """
-Filename: Metal.py
+Filename: main.py
 Author: D.C
 Purpose: Main file for the *insert game name* game.
 """
 
+from time import sleep
+import random
 import pygame
 import pygame_functions
 
@@ -11,6 +13,7 @@ TYPES_ENUM = {'rock': 0, 'paper': 1, 'scissor': 2}
 
 SCREEN_SIZE_X = 1280
 SCREEN_SIZE_Y = 720
+
 
 
 class Card:
@@ -35,14 +38,14 @@ def init_cards():
 
     rock_types = {1: 'rock.png', 2: 'rock.png', 3: 'rock.png', 4: 'rock.png', 5: 'rock.png', 6: 'the_rock.png'}
     paper_types = {1: 'rock.png', 2: 'rock.png', 3: 'rock.png', 4: 'rock.png', 5: 'rock.png', 6: 'toilet_paper.png'}
-    scissor_types = {1: 'rock.png', 2: 'rock.png', 3: 'rock.png', 4: 'rock.png', 5: 'rock.png', 6: 'chainsaw.png'}
+    scissor_types = {1: 'rock.png', 2: 'rock.png', 3: 'chainsaw.png', 4: 'rock.png', 5: 'rock.png', 6: 'chainsaw.png'}
 
-    # Initiate the card objects according to the given lists.
-    rock_cards = [Card(pygame_functions.newSprite('assets/pictures/cards/' + rock_types[key])\
+    #Initiate the card objects according to the given lists.
+    rock_cards = [Card(pygame_functions.newSprite('assets\\pictures\\cards\\' + rock_types[key])\
                         , 'rock', key) for key in rock_types]
-    paper_cards = [Card(pygame_functions.newSprite('assets/pictures/cards/' + paper_types[key]) \
+    paper_cards = [Card(pygame_functions.newSprite('assets\\pictures\\cards\\' + paper_types[key]) \
                          , 'paper', key) for key in paper_types]
-    scissor_cards = [Card(pygame_functions.newSprite('assets/pictures/cards/' + scissor_types[key]) \
+    scissor_cards = [Card(pygame_functions.newSprite('assets\\pictures\\cards\\' + scissor_types[key]) \
                            , 'scissor', key) for key in scissor_types]
 
     return rock_cards, paper_cards, scissor_cards
@@ -107,22 +110,49 @@ def make_choice(chosen_card):
     return chosen_card.card_type, chosen_card.card_factor
 
 
-def wait_function():
-    pygame_functions.endWait()
+def throw_dice():
+    """
+    Display the dice throwing animation and return the result.
+    :return: The result of the dice roll. (int)
+    """
+    DICE_IMAGE_SIZE = 128
+
+    dice_path = 'assets\\pictures\\dice\\dice_'
+    dice_sprite = pygame_functions.newSprite(dice_path + '1.png')
+    pygame_functions.moveSprite(dice_sprite, SCREEN_SIZE_X // 2, SCREEN_SIZE_Y // 2)
+
+    # Animation of the dice roll.
+    for runs in range(3):
+        for index in range(1, 7):
+            pygame_functions.setSpriteImage(dice_sprite, pygame_functions.loadImage(dice_path+str(index)+'.png'))
+            pygame_functions.showSprite(dice_sprite)
+            sleep(0.05)
+    # Actually generate the cards luck.
+    luck_choice = random.randrange(1, 7)
+
+    pygame_functions.setSpriteImage(dice_sprite, pygame_functions.loadImage(dice_path+str(luck_choice)+'.png'))
+    pygame_functions.showSprite(dice_sprite)
+
+    sleep(2)
+    # Move the dice to the side.
+    pygame_functions.moveSprite(dice_sprite, SCREEN_SIZE_X - (DICE_IMAGE_SIZE // 2), SCREEN_SIZE_Y // 2)
+
+    return luck_choice
 
 
-def screen_function(current_luck):
+def main():
+
     pygame_functions.screenSize(SCREEN_SIZE_X, SCREEN_SIZE_Y, fullscreen=False)
+    pygame_functions.setBackgroundColour('black')
+
+    current_luck = throw_dice()
+
     cards = init_cards()
 
     card_sprites = show_cards(current_luck, cards)
     print(detect_choice(card_sprites))
 
-    wait_function()
-
-
-def main():
-    screen_function(6)
+    pygame_functions.endWait()
 
 
 if __name__ == '__main__':

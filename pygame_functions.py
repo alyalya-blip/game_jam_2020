@@ -16,7 +16,7 @@ textboxGroup = pygame.sprite.OrderedUpdates()
 gameClock = pygame.time.Clock()
 backgroundImage = None
 musicPaused = False
-hiddenSprites= pygame.sprite.OrderedUpdates()
+hiddenSprites = pygame.sprite.OrderedUpdates()
 
 keydict = {"space": pygame.K_SPACE, "esc": pygame.K_ESCAPE, "up": pygame.K_UP, "down": pygame.K_DOWN,
            "left": pygame.K_LEFT, "right": pygame.K_RIGHT, "enter":pygame.K_RETURN,
