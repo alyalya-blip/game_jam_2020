@@ -15,7 +15,6 @@ SCREEN_SIZE_X = 1280
 SCREEN_SIZE_Y = 720
 
 
-
 class Card:
     def __init__(self, card_sprite, card_type, card_factor):
         """
@@ -104,10 +103,38 @@ def make_choice(chosen_card):
     """
 
     pygame_functions.hideAll()
-    pygame_functions.moveSprite(chosen_card.card_sprite, SCREEN_SIZE_X // 2, SCREEN_SIZE_Y // 2)
+    animate_sprite_movement(SCREEN_SIZE_X // 2, SCREEN_SIZE_Y // 2, chosen_card.card_sprite, 0.015)
     pygame_functions.showSprite(chosen_card.card_sprite)
 
     return chosen_card.card_type, chosen_card.card_factor
+
+# TODO: Move this function into pygame_functions.
+def animate_sprite_movement(end_x, end_y, move_sprite, speed = 0.005):
+    """
+    Animate the movement on object from start_x, start_y to end_x, end_y
+    :param end_x: The final x position. (int)
+    :param end_y: The final y position. (int)
+    :param move_sprite: The sprite to move. (Sprite)
+    :param speed: The speed of the movement, a value between 0 and 1, 1 is instant, 0 won't move.
+    """
+
+    start_x, start_y = move_sprite.rect.center
+
+    x_delta = end_x - start_x
+    y_delta = end_y - start_y
+
+    current_x = start_x
+    current_y = start_y
+
+    for i in range (int(1 / speed)):
+        current_x = current_x + (x_delta * speed)
+        current_y = current_y + (y_delta * speed)
+
+        pygame_functions.moveSprite(move_sprite, int(current_x), int(current_y))
+        pygame_functions.showSprite(move_sprite)
+
+    # Fix inconsistent movement with the animation.
+    pygame_functions.moveSprite(move_sprite, end_x, end_y)
 
 
 def throw_dice():
@@ -115,6 +142,7 @@ def throw_dice():
     Display the dice throwing animation and return the result.
     :return: The result of the dice roll. (int)
     """
+
     DICE_IMAGE_SIZE = 128
 
     dice_path = 'assets\\pictures\\dice\\dice_'
@@ -127,6 +155,7 @@ def throw_dice():
             pygame_functions.setSpriteImage(dice_sprite, pygame_functions.loadImage(dice_path+str(index)+'.png'))
             pygame_functions.showSprite(dice_sprite)
             sleep(0.05)
+
     # Actually generate the cards luck.
     luck_choice = random.randrange(1, 7)
 
@@ -134,8 +163,9 @@ def throw_dice():
     pygame_functions.showSprite(dice_sprite)
 
     sleep(2)
+
     # Move the dice to the side.
-    pygame_functions.moveSprite(dice_sprite, SCREEN_SIZE_X - (DICE_IMAGE_SIZE // 2), SCREEN_SIZE_Y // 2)
+    animate_sprite_movement(SCREEN_SIZE_X - (DICE_IMAGE_SIZE // 2), SCREEN_SIZE_Y // 2, dice_sprite, 0.01)
 
     return luck_choice
 
@@ -143,6 +173,7 @@ def throw_dice():
 def main():
 
     pygame_functions.screenSize(SCREEN_SIZE_X, SCREEN_SIZE_Y, fullscreen=False)
+    # TODO: make a game table background.
     pygame_functions.setBackgroundColour('black')
 
     current_luck = throw_dice()
@@ -157,4 +188,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
