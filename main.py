@@ -137,7 +137,16 @@ def animate_sprite_movement(end_x, end_y, move_sprite, speed = 0.005):
     pygame_functions.moveSprite(move_sprite, end_x, end_y)
 
 
-def throw_dice():
+def calculate_dice_by_luck(luck_factor):
+    """
+    Calculate the result of the dice, according to the players luck factor.
+    :param luck_factor: The player's luck factor (between 1 - 6). (int)
+    :return: The result of the dice throw. (int)
+    """
+    return random.choice(range(luck_factor, 7))
+
+
+def throw_dice(luck_factor):
     """
     Display the dice throwing animation and return the result.
     :return: The result of the dice roll. (int)
@@ -157,7 +166,7 @@ def throw_dice():
             sleep(0.05)
 
     # Actually generate the cards luck.
-    luck_choice = random.randrange(1, 7)
+    luck_choice = calculate_dice_by_luck(luck_factor)
 
     pygame_functions.setSpriteImage(dice_sprite, pygame_functions.loadImage(dice_path+str(luck_choice)+'.png'))
     pygame_functions.showSprite(dice_sprite)
@@ -173,15 +182,19 @@ def throw_dice():
 def main():
 
     pygame_functions.screenSize(SCREEN_SIZE_X, SCREEN_SIZE_Y, fullscreen=False)
-    # TODO: make a game table background.
-    pygame_functions.setBackgroundColour('black')
-
-    current_luck = throw_dice()
-
+    luck_factor = 4
     cards = init_cards()
 
-    card_sprites = show_cards(current_luck, cards)
-    print(detect_choice(card_sprites))
+    while not pygame_functions.keyPressed('esc'):
+        # TODO: make a game table background.
+        pygame_functions.setBackgroundColour('black')
+
+        current_luck = throw_dice(luck_factor)
+
+        card_sprites = show_cards(current_luck, cards)
+        print(detect_choice(card_sprites))
+        sleep(1)
+        pygame_functions.hideAll()
 
     pygame_functions.endWait()
 
